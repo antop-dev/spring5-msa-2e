@@ -8,3 +8,6 @@
 
 정오표
 * http://www.acornpub.co.kr/book/spring5-microservices-2e#errata
+
+컬러 이미지
+* http://www.acornpub.co.kr/acorn_guest/Spring5.0MicroservicesSecondEdition_ColorImages.pdf
