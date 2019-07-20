@@ -56,7 +56,7 @@
 [`Redis`](https://redis.io/)
 [`MariaDB`](https://mariadb.org/)
 
-## `7` 서비스를 포트에 바인딩해서 노출
+### `7` 서비스를 포트에 바인딩해서 노출
 
 ![Imgur](https://i.imgur.com/GQCuUZk.png)
 
