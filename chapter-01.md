@@ -46,7 +46,7 @@
 
 ### MSA vs SOA
 
-![Imgur](https://i.imgur.com/Kfgbs1v.png)
+![Imgur](https://i.imgur.com/18DXwGI.jpg)
 
 * [MSA Vs.SOA](http://blog.naver.com/PostView.nhn?blogId=stmshra&logNo=221446919085&parentCategoryNo=&categoryNo=73&viewDate=&isShowPopularPosts=true&from=search)
 * [마이크로서비스와 SOA 비교](https://free-strings.blogspot.com/2016/01/soa.html)
