@@ -106,4 +106,5 @@
 
 ## References
 
+* [The Twelve-Factor App](https://12factor.net/ko/)
 * [12 FACTOR APP WITH DOCKER](https://www.slideshare.net/SASTREEPTIK/12-factor-app-with-docker)
