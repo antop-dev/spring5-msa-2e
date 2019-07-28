@@ -70,7 +70,7 @@
 * 자기 완비적이다.
 * [회귀 테스트<sup>`regression test`</sup>](https://ko.wikipedia.org/wiki/%ED%9A%8C%EA%B7%80_%ED%85%8C%EC%8A%A4%ED%8A%B8)
 
-## 스프링 부트 마이크로서비스에 HATEOAS 기능 추가 `chapter-03.boot-hateoas:302`
+## 스프링 부트에 HATEOAS 기능 추가 `chapter-03.boot-hateoas:302`
 
 * [Glory of REST](https://jinson.tistory.com/190)
 
@@ -205,6 +205,8 @@ class WebConfig extends WebMvcConfigurerAdapter {
 * [Docbox](https://github.com/tmcw/docbox)
 
 ## 고객 등록 마이크로서비스 예제 `chapter-03.boot-customer:8080`
+
+![Imgur](https://i.imgur.com/xazMC1M.png)
 
 * [@RepositoryRestResource](https://docs.spring.io/spring-data/rest/docs/current/reference/html/#repository-resources.collection-resource)
 * [Difference between `path` and `value` in spring boot RequestMapping](https://stackoverflow.com/questions/50351590/difference-between-path-and-value-in-spring-boot-requestmapping)
