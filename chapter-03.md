@@ -190,6 +190,33 @@ class WebConfig extends WebMvcConfigurerAdapter {
 * 사용자 정의 서버 진단 모듈 추가
 * 사용자 정의 지표<sup>`metrics`</sup>
 
+※ `org.springframework.boot.actuate.metrics.CounterService`와 `GaugeService` 인터페이스를 `DI` 하면 `IntelliJ`에서 `autowire` 관련 에러가 난다.
+
+![Imgur](https://i.imgur.com/oCeuQDG.png)
+
+`org.springframework.boot.actuate.autoconfigure.MetricRepositoryAutoConfiguration` 클래스를 보면 **특정 조건에 따라 빈을 생성**하게 되어 있다.
+
+실제로 런타임에서는 한가지의 빈만 등록이 되겠지만 `IDE`에서는 인식하지 못하고 여러개의 빈이 중복으로 등록 되는 것으로 인식한다. 
+
+당장 저 현상을 해결하고 싶다면 아래와 같이 구현체를 `DI` 받으면 되겠다.
+
+```java
+@RestController
+class GreetingController {
+    private final TPSHealth health;
+    private final CounterService counterService;
+    private final GaugeService gaugeService;
+
+    // BufferCounterService, BufferGaugeService 를 직접 주입 받자.
+    // 하지만 다른 버전의 JDK를 사용할 경우 오작동할 수 있다.
+    public GreetingController(TPSHealth health, BufferCounterService counterService, BufferGaugeService gaugeService) {
+        this.health = health;
+        this.counterService = counterService;
+        this.gaugeService = gaugeService;
+    }
+}
+```
+
 ## 마이크로서비스 문서화 `chapter-03.boot-swagger:307`
 
 * [Swagger](https://swagger.io/), [Swagger UI](https://swagger.io/tools/swagger-ui/)
