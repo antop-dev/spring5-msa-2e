@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>www.flybrownfield.com</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta charset="utf-8"/>
+    <link href="/css/main.css" media="screen" rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<nav>
+    <ul>
+        <li>BrownField Airline</li>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/search}">Search</a></li>
+        <li><a th:href="@{/search-booking}">CheckIn</a></li>
+    </ul>
+</nav>
+<div align="center" class="form-style-8">
+    <h2>Available Flights</h2>
+    <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Flight</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Date</th>
+            <th>Fare</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <!--/*@thymesVar id="uidata" type="com.brownfield.pss.client.UIData"*/-->
+        <tr th:each="flight : ${uidata.flights}">
+            <!--/*@thymesVar id="flight" type="com.brownfield.pss.client.Flight"*/-->
+            <td th:text="${flight.id}"/>
+            <td th:text="${flight.flightNumber}"/>
+            <td th:text="${flight.origin}"/>
+            <td th:text="${flight.destination}"/>
+            <td th:text="${flight.flightDate}"/>
+            <td th:text="${flight.fares.fare}"/>
+            <td th:text="${flight.fares.fare}"/>
+            <td>
+                <a th:href="@{/book/{flightNumber}/{origin}/{destination}/{flightDate}/{fare}(
+ 	 		 					flightNumber=${flight.flightNumber},
+ 	 		 					origin=${flight.origin},
+ 	 		 					destination=${flight.destination},
+ 	 		 					flightDate=${flight.flightDate},
+ 	 		 					fare=${flight.fares.fare}
+ 	 		 					)}">Book</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>
