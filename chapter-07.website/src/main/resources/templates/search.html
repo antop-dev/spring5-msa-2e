@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>www.flybrownfield.com</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta charset="utf-8"/>
+    <link href="/css/main.css" media="screen" rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li>BrownField Airline</li>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/search}">Search</a></li>
+        <li><a th:href="@{/search-booking}">CheckIn</a></li>
+    </ul>
+</nav>
+<div align="center" class="form-style-8">
+    <h2>Flight Search</h2>
+    <!--/*@thymesVar id="uidata" type="com.brownfield.pss.client.UIData"*/-->
+    <!--/*@thymesVar id="searchQuery" type="com.brownfield.pss.client.SearchQuery"*/-->
+    <form action="#" method="get" th:action="@{/search}" th:object="${uidata.searchQuery}">
+        <table>
+            <tr>
+                <td>traveling from</td>
+                <td><input th:field="*{origin}" type="text"/></td>
+            </tr>
+            <tr>
+                <td>going to</td>
+                <td><input th:field="*{destination}" type="text"/></td>
+            </tr>
+            <tr>
+                <td>planning on</td>
+                <td><input th:field="*{flightDate}" type="text"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Submit"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>
