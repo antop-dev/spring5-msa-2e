@@ -12,7 +12,7 @@
 
     <groupId>com.brownfield.pss</groupId>
     <artifactId>chapter-07.config-server</artifactId>
-    <version>01.0</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>chapter-07.config-server</name>
