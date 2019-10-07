@@ -2,7 +2,7 @@
 
 * 환경설정 외부화를 담당하는 스프링 컨피그 서버<sup>`Config Server`</sup>
 * 서비스 등록 및 탐색<sup>`discovery`</sup>
-* 프록시 및 게이트웨이 역할을 담당하는 주울<sup>Zuul</sup>
+* 프록시 및 게이트웨이 역할을 담당하는 주울<sup>`Zuul`</sup>
 * 마이크로서비스 자동 등록 및 서비스 탐색의 구현
 * 비동기 리액티브 마이크로서비스 구성에 필요한 스프링 클라우드 메시징
 
@@ -172,8 +172,6 @@ RestTemplate rawRestTemplate() { // hostname을 그대로 사용
 2. 유레카 서버가 장애로 인해 접근할 수 없는 상태가 돼도 유레카 클라이언트는 **기존 로컬 캐시에 저장돼 있는 내용을 기반으로 오류 없이 동작**한다.
 3. 클라이언트가 최신 정보를 반영하지 않으므로 일관성 문제가 생길 수 있다.
 
-고가용성 유레카 서버 아키텍처
-
 유레카 서버는 P2P<sup>`peer-to-peer`</sup> 방식의 데이터 동기화 메커니즘을 바탕으로 만들어졌다. 하나 이상의 유레카 서버가 있다면 각 유레카 서버는 피어 관계에 있는 서버 중 최소한 하나의 서버와 연결돼야 한다.
 
 이 둘은 서버인 동시에 서로 상태를 동기화하기 위해 서로를 바라보는 클라이언트이기도 하다.
@@ -252,3 +250,251 @@ RestTemplate rawRestTemplate() { // hostname을 그대로 사용
 
 ## 브라운필드 PSS 시스템 아키텍처 정리
 
+아래와 같이 3개의 VM 서버에 구성을 해봤다.
+
+![https://i.imgur.com/CJP9vXe.png](https://i.imgur.com/CJP9vXe.png)
+
+Spring Boot Admin - Wallboard
+
+![https://i.imgur.com/gBDrOse.png](https://i.imgur.com/gBDrOse.png)
+
+### Issue
+
+* [RabbitMQ 외부에서 guest 계정 접속 가능하게 하기](https://stackoverflow.com/questions/26811924/spring-amqp-rabbitmq-3-3-5-access-refused-login-was-refused-using-authentica)
+
+### History
+
+모든 VM에서 수동으로 실행시켰다... 좀 힘들더라.. ㅎㅎ
+
+```
+# spring-boot-admin (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Drun.profiles=prod spring-boot-admin.jar > spring-boot-admin.log &
+
+# config-server (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod config-server.jar \
+  --server.port=8888 \
+  --spring.rabbitmq.host=pss-3 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8888 \
+  > config-server.log &
+
+# book-api-gateway (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod book-api-gateway.jar \
+  --server.port=8065 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8065 \
+  > book-api-gateway.log &
+
+# fares-api-gateway (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod fares-api-gateway.jar \
+  --server.port=8075 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8075 \
+  > fares-api-gateway.log &
+
+# checkin-api-gateway (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod checkin-api-gateway.jar \
+  --server.port=8085 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8085 \
+  > checkin-api-gateway.log &
+
+# search-api-gateway (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod search-api-gateway.jar \
+  --server.port=8095 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8095 \
+  > search-api-gateway.log &
+
+# config-server (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod config-server.jar \
+  --server.port=8889 \
+  --spring.rabbitmq.host=pss-3 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8889 \
+  > config-server.log &
+
+# eureka-server (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod eureka-server.jar \
+  --server.port=8761 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8761 \
+  --eureka.client.service-url.defaultZone=http://pss-3:8762/eureka/ \
+  > eureka-server.log &
+
+# book-api-gateway (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod book-api-gateway.jar \
+  --server.port=8066 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8066 \
+  > book-api-gateway.log &
+
+# fares-api-gateway (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod fares-api-gateway.jar \
+  --server.port=8076 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8076 \
+  > fares-api-gateway.log &
+
+# checkin-api-gateway (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod checkin-api-gateway.jar \
+  --server.port=8086 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8086 \
+  > checkin-api-gateway.log &
+
+# search-api-gateway (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod search-api-gateway.jar \
+  --server.port=8096 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8096 \
+  > search-api-gateway.log &
+
+# eureka-server (pss-3)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod eureka-server.jar \
+  --server.port=8762 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8762 \
+  --eureka.client.service-url.defaultZone=http://pss-2:8761/eureka/ \
+  > eureka-server.log &
+```
+
+```
+# book (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod book.jar \
+  --server.port=8060 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8060 \
+  > book.log &
+
+# fares (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod fares.jar \
+  --server.port=8070 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8070 \
+  > fares.log &
+
+# checkin (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod checkin.jar \
+  --server.port=8080 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8080 \
+  > checkin.log &
+
+# search (pss-1)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod search.jar \
+  --server.port=8090 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-1:8090 \
+  > search.log &
+```
+
+```
+# book (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod book.jar \
+  --server.port=8061 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8061 \
+  > book.log &
+
+# fares (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod fares.jar \
+  --server.port=8071 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8071 \
+  > fares.log &
+
+# checkin (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod checkin.jar \
+  --server.port=8081 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8081 \
+  > checkin.log &
+
+# search (pss-2)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod search.jar \
+  --server.port=8091 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-2:8091 \
+  > search.log &
+```
+
+```
+# book (pss-3)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod book.jar \
+  --server.port=8062 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8062 \
+  > book.log &
+
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod book.jar \
+  --server.port=8063 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8063 \
+  > book.log &
+
+# fares (pss-3)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod fares.jar \
+  --server.port=8072 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8072 \
+  > fares.log &
+
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod fares.jar \
+  --server.port=8073 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8073 \
+  > fares.log &
+
+# checkin (pss-3)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod checkin.jar \
+  --server.port=8082 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8082 \
+  > checkin.log &
+
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod checkin.jar \
+  --server.port=8083 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8083 \
+  > checkin.log &
+
+# search (pss-3)
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod search.jar \
+  --server.port=8092 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8092 \
+  > search.log &
+
+nohup java -jar -Xms128M -Xmx128M -Dspring.profiles.active=prod search.jar \
+  --server.port=8093 \
+  --spring.cloud.config.uri=http://pss-1:8880 \
+  --spring.boot.admin.client.url=http://pss-1:9000 \
+  --spring.boot.admin.client.instance.service-base-url=http://pss-3:8093 \
+  > search.log &
+```
