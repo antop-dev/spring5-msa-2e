@@ -11,7 +11,7 @@
 
     <groupId>com.brownfield.pss</groupId>
     <artifactId>chapter-07-eureka-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
 
     <name>chapter-07-eureka-server</name>
     <description>Demo project for Spring Boot</description>
@@ -19,7 +19,7 @@
     <properties><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
+        <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
         <spring-boot-admin.version>2.1.5</spring-boot-admin.version>
     </properties>
 
@@ -62,6 +62,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>eureka-server</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

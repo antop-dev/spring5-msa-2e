@@ -11,7 +11,7 @@
 
     <groupId>com.brownfield.pss</groupId>
     <artifactId>chapter-07-checkin-api-gateway</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
 
     <name>chapter-07.checkin-api-gateway</name>
     <description>Demo project for Spring Boot</description>
@@ -73,6 +73,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>checkin-api-gateway</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

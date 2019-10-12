@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>com.brownfield.pss</groupId>
-    <artifactId>chapter-07-fares-api-gateway</artifactId>
+    <artifactId>chapter-07-book-api-gateway</artifactId>
     <version>1.0</version>
 
-    <name>chapter-07.fares-api-gateway</name>
+    <name>chapter-07.book-api-gateway</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -73,6 +73,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>book-api-gateway</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
