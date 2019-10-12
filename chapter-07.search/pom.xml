@@ -90,6 +90,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>search-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

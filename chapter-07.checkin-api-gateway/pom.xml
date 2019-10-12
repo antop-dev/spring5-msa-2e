@@ -73,6 +73,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>checkin-api-gateway</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

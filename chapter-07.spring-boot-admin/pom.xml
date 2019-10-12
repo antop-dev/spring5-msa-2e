@@ -45,6 +45,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>spring-boot-admin</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
