@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>www.flybrownfield.com</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta charset="utf-8"/>
+    <link href="/css/main.css" media="screen" rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<nav>
+    <ul>
+        <li>BrownField Airline</li>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/search}">Search</a></li>
+        <li><a th:href="@{/search-booking}">CheckIn</a></li>
+    </ul>
+</nav>
+<div align="center" class="form-style-8">
+    <h2>Selected Flight</h2>
+    <form action="#" method="post" th:action="@{/confirm}" th:object="${uidata}">
+        <h3>
+            <table>
+
+                <tbody>
+                <tr>
+                    <td>
+                        <span th:text="${uidata.selectedFlight.flightNumber}"></span>
+                        <input th:field="${uidata.selectedFlight.flightNumber}" type="hidden"/>
+                    </td>
+                    <td>
+                        <span th:text="${uidata.selectedFlight.origin}"></span>
+                        <input th:field="${uidata.selectedFlight.origin}" type="hidden"/>
+                    </td>
+                    <td>
+                        <span th:text="${uidata.selectedFlight.destination}"></span>
+                        <input th:field="${uidata.selectedFlight.destination}" type="hidden"/>
+                    </td>
+                    <td>
+                        <span th:text="${uidata.selectedFlight.flightDate}"></span>
+                        <input th:field="${uidata.selectedFlight.flightDate}" type="hidden"/>
+                    </td>
+                    <td>
+                        <span th:text="${uidata.selectedFlight.fares.fare}"></span>
+                        <input th:field="${uidata.selectedFlight.fares.fare}" type="hidden"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </h3>
+        <table>
+            <tr>
+                <td>First Name</td>
+                <td><input th:field="${uidata.passenger.firstName}" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Last Name</td>
+                <td><input th:field="${uidata.passenger.lastName}" type="text"/></td>
+            </tr>
+            <tr>
+                <td>Gender</td>
+                <td>
+                    <select th:field="${uidata.passenger.gender}">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Confirm"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>
