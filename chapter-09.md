@@ -6,6 +6,43 @@
 * 마이크로서비스를 도커 이미지 및 도커 컨터에니로 만들고 배포하는 방법
 * AWS<sup>`Amazon Web Service`</sup>를 활용한 클라우드 기반의 도커 배포
 
+## 컨테이너란 무엇인가?
+
+컨테이너는 운영체제 위에서 폐쇄적인 사적 공간을 제공한다.
+
+![컨테이너](https://i.imgur.com/llN1pMS.png)
+
+* [도커<sup>`Docker`</sup>](https://www.docker.com/)
+* [lmctfy](https://github.com/google/lmctfy)
+* [로켓<sup>`Rocket`</sup>](https://coreos.com/rkt/)
+* [LXD](https://linuxcontainers.org/lxd/introduction/)
+* [칼리코<sup>`Calico`</sup>](https://www.projectcalico.org/)
+
+## 가상머신과 컨테이너의 차이
+
+![VM vs Container](https://i.imgur.com/m3mWq9p.png)
+
+VM<sup>`Virtual Machine`</sup>
+* 실행되는 프로세스들에 완전 고립된 환경을 제공한다.
+* 필요한 자원 요구량이 많기 때문에 하나의 베어 메탈 장비에 얹을 수 있는 가상머신의 수가 제한적이다. 
+
+컨테이너
+* 호스트 운영체제 위에서 고립된 실행 환경을 제공한다.
+* 가볍고 빠르다.
+* 운영체제를 공유하므로 제약 사항들도 있다. (IP 테이블 방화벽 규칙 등)
+
+## 컨테이너의 장점 `436p`
+
+* 자기 완비적
+* 경량성
+* 확장성
+* 이식성
+* 저령한 라이선스 비용
+* 데브옵스
+* 버전 관리
+* 재사용성
+* 불변 컨테이너
+
 ## 마이크로서비스를 도커에 배포
 
 ### Install RabbitMQ Server on CentOS 7
