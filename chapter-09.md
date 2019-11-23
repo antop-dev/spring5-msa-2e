@@ -68,16 +68,85 @@ VM<sup>`Virtual Machine`</sup>
 | checkin | 8070 |
 | website | 8001 |
 
-```bash
-docker ps
+각 서비스를 Clone 받은 후 메이븐<sup>`maven`</sup> 빌드한다.
 
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
-a86111b254cf        website:1.0         "java -jar /website.…"   5 minutes ago       Up 5 minutes        0.0.0.0:8001->8001/tcp   compassionate_bouman
-0c776ba7edb3        checkin:1.0         "java -jar /checkin.…"   6 minutes ago       Up 6 minutes        0.0.0.0:8070->8070/tcp   upbeat_diffie
-e231ae494db6        search:1.0          "java -jar /search.j…"   8 minutes ago       Up 8 minutes        0.0.0.0:8090->8090/tcp   priceless_knuth
-2f9b3c117f3b        book:1.0            "java -jar /book.jar"    10 minutes ago      Up 10 minutes       0.0.0.0:8060->8060/tcp   vibrant_newton
-2bc0dbe0dab9        fares:1.0           "java -jar /fares.jar"   11 minutes ago      Up 11 minutes       0.0.0.0:8080->8080/tcp   naughty_cartwright
+※ `/root`를 베이스로 했다.
+
+```bash
+# git clone https://github.com/antop-dev/spring5-msa-2e.git
+Cloning into 'spring5-msa-2e'...
+remote: Enumerating objects: 731, done.
+remote: Counting objects: 100% (731/731), done.
+remote: Compressing objects: 100% (324/324), done.
+remote: Total 731 (delta 198), reused 721 (delta 190), pack-reused 0
+Receiving objects: 100% (731/731), 166.15 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (198/198), done.
+
+# cd /root/spring5-msa-2e/chapter-09
+
+# ls
+chapter-09.book  chapter-09.checkin  chapter-09.fares  chapter-09.search  chapter-09.website  pom.xml
+
+# mvn package
 ```
+
+5개의 프로젝트를 도커 이미지로 만든다.
+
+```bash
+docker build -t book:1.0 /root/spring5-msa-2e/chapter-09/chapter-09.book
+docker build -t checkin:1.0 /root/spring5-msa-2e/chapter-09/chapter-09.checkin
+docker build -t fares:1.0 /root/spring5-msa-2e/chapter-09/chapter-09.fares
+docker build -t search:1.0 /root/spring5-msa-2e/chapter-09/chapter-09.search
+docker build -t website:1.0 /root/spring5-msa-2e/chapter-09/chapter-09.website
+```
+
+이미지 확인
+
+```bash
+# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
+website             1.0                 fc326427b741        About a minute ago   510MB
+search              1.0                 8622986ce081        About a minute ago   531MB
+fares               1.0                 5dcb2e4b1635        About a minute ago   531MB
+checkin             1.0                 4251eb724688        About a minute ago   537MB
+book                1.0                 4031272284ca        3 minutes ago        531MB
+openjdk             8                   57c2c2d2643d        5 weeks ago          488MB
+```
+
+레빗엠큐<sup>`rabbitmq`</sup>가 필요하므로 [도커에 실행](https://hub.docker.com/_/rabbitmq)한다.
+
+```bash
+docker run -d --hostname rabbitmq-server --name rabbitmq-server \
+  -p 4369:4369 -p 5671-5672:5671-5672 -p 15671-15672:15671-15672 -p 25672:25672 \
+  rabbitmq:3-management
+
+```
+
+각 이미지를 순서대로 실행
+
+```bash
+docker run -d --name search -p 8090:8090 search:1.0
+docker run -d --name fares -p 8080:8080 fares:1.0
+docker run -d --name book -p 8060:8060 book:1.0
+docker run -d --name checkin -p 8070:8070 checkin:1.0
+docker run -d --name website -p 8010:8010 website:1.0
+```
+
+```bash
+# docker ps
+
+CONTAINER ID        IMAGE                   COMMAND                  CREATED             STATUS              PORTS                                                                                                                      NAMES
+8b5ce3f3ed69        website:1.0             "java -jar /website.…"   13 seconds ago      Up 11 seconds       0.0.0.0:8001->8001/tcp                                                                                                     website
+3b45b7c78e65        checkin:1.0             "java -jar /checkin.…"   2 minutes ago       Up 2 minutes        0.0.0.0:8070->8070/tcp                                                                                                     checkin
+d47b4c11f9de        book:1.0                "java -jar /book.jar"    3 minutes ago       Up 3 minutes        0.0.0.0:8060->8060/tcp                                                                                                     book
+76b3088e630f        fares:1.0               "java -jar /fares.jar"   4 minutes ago       Up 3 minutes        0.0.0.0:8080->8080/tcp                                                                                                     fares
+38d6c4e56e4b        search:1.0              "java -jar /search.j…"   4 minutes ago       Up 4 minutes        0.0.0.0:8090->8090/tcp                                                                                                     search
+0f9913c65f55        rabbitmq:3-management   "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:4369->4369/tcp, 0.0.0.0:5671-5672->5671-5672/tcp, 0.0.0.0:15671-15672->15671-15672/tcp, 0.0.0.0:25672->25672/tcp   rabbitmq-server
+```
+
+http://도커호스트:8001
+
+![website](https://i.imgur.com/M3h0zRR.png)
 
 ## Intellij with Docker
 
